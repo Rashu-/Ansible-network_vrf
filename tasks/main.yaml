@@ -1,0 +1,25 @@
+---
+
+- name: Check network device OS
+  assert:
+    that: >
+      ansible_network_os == 'nxos' or
+      ansible_network_os == 'ios'
+    msg: "Network device OS not defined or not supported by this role: {{ ansible_network_os }}"
+
+- name: Add/remove nxos vrfs
+  nxos_vrf:    
+      name: "{{ item.name | default(omit) }}"    
+      description:  "{{ item.description | default(omit) }}" 
+      state: "{{ item.state | default('present') }}"
+      admin_state: "{{ item.admin_state | default('up') }}"
+      delay: "{{ item.delay | default(omit) }}"
+      rd: "{{ item.rd | default(omit) }}"
+  with_items: "{{ vrfs }}"    
+  when: >
+    ansible_network_os == 'nxos'  
+  tags: 
+    - vrf_config
+    - nxos
+
+
