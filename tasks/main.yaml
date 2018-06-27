@@ -9,7 +9,7 @@
 
 - name: Add/remove nxos vrfs
   nxos_vrf:    
-      name: "{{ item.value.name | default(omit) }}"    
+      name: "{{ item.value.name }}"    
       description:  "{{ item.value.description | default(omit) }}" 
       state: "{{ item.value.state | default('present') }}"
       admin_state: "{{ item.value.admin_state | default('up') }}"
@@ -17,7 +17,8 @@
       rd: "{{ item.value.rd | default(omit) }}"
   loop: "{{ vrfs | dict2items }}"    
   when: >
-    ansible_network_os == 'nxos'  
+    ansible_network_os == 'nxos' and
+    vrfs is defined 
   tags: 
     - vrf_config
     - nxos
